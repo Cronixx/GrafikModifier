@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
 public class EdgeDetector implements Runnable {
+    private final int id;
     private int[][] sobel1 = {
             {-1,0,1},
             {-2,0,2},
@@ -33,9 +34,11 @@ public class EdgeDetector implements Runnable {
     private volatile BufferedImage img;
     private volatile BufferedImage output;
 
-    public EdgeDetector(ImagePathBundle ipb) {
+    public EdgeDetector(ImagePathBundle ipb, int id) {
         this.img = ipb.getImg();
         this.path = ipb.getPath();
+        this.id = id;
+        System.out.println("Created EdgeDetector #"+this.id);
     }
 
     /**
@@ -44,12 +47,12 @@ public class EdgeDetector implements Runnable {
      * First luminance is calculated.
      * After that, the sobel operators are applied to every pixel.
      * The distance between the two resulting values is our grayscale color,
-     * to which we set our pixel.
+     * to which we set the color of our pixel.
      *
      * Afterwards, the result is stored in output
      * */
     public void run() {
-        System.out.println("Starte bearbeitung aus Thread");
+        System.out.println("Thread #"+this.id+" starts working.");
         double[][] lum = luminanz(img);
 
         for (int x = 1; x < img.getWidth() - 1; x++) {
@@ -70,6 +73,7 @@ public class EdgeDetector implements Runnable {
             }
         }
         this.output = img;
+        System.out.println("Thread #"+this.id+" complete");
     }
 
     /** Calculate luminance of every pixel from input picture */

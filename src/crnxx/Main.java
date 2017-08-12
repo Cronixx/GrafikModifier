@@ -8,7 +8,8 @@ import java.nio.file.*;
 import java.util.ArrayList;
 
 /**
- *  
+ *  Edge Detection
+ *  https://www.wikiwand.com/de/Canny-Algorithmus ??????
  * */
 public class Main {
 
@@ -25,8 +26,9 @@ public class Main {
         }
 
         for(int imageCount = 0; imageCount < imgList.size(); imageCount++) {
-            detectorList.add(new EdgeDetector(new ImagePathBundle(imgList.get(imageCount), pathList.get(imageCount))));
+            detectorList.add(new EdgeDetector(new ImagePathBundle(imgList.get(imageCount), pathList.get(imageCount)), imageCount));
             threadlist.add(new Thread(detectorList.get(detectorList.size()-1)));
+            System.out.println("Start thread #"+(threadlist.size()-1));
             threadlist.get(threadlist.size()-1).start();
         }
         for(Thread t : threadlist) {
