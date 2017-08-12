@@ -11,51 +11,40 @@ import java.util.ArrayList;
  *  Edge Detection
  * */
 public class Main {
-    static int[][] sobel1 = {
-            {-1,0,1},
-            {-2,0,2},
-            {-1,0,1}
-    };
-    static int[][] sobel2 = {
-            {1,2,1},
-            {0,0,0},
-            {-1,-2,-1}
-    };
+
 
     public static void main(String[] args) {
-        String filepath = "C:\\test\\img.jpg";
         ArrayList<Path> pathList = getTargetPaths();
         ArrayList<BufferedImage> imgList = readImage(pathList);
-        int count = 0;
+        ArrayList<EdgeDetector> detectorList = new ArrayList<>();
+        ArrayList<Thread> threadlist = new ArrayList<>();
 
-        if(imgList.size() < 0) {
+        if(imgList.size() <= 0) {
             System.out.println("Konnte kein Bild lesen");
             return;
         }
-        for(int imageCount = 0; imageCount < imgList.size(); imageCount++) {
-            BufferedImage img = imgList.get(imageCount);
-            double[][] lum = luminanz(img);
 
-            for (int x = 1; x < img.getWidth() - 1; x++) {
-                for (int y = 1; y < img.getHeight() - 1; y++) {
-                    int grayx = 0;
-                    int grayy = 0;
-                    for (int i = -1; i < 2; i++) {
-                        for (int j = -1; j < 2; j++) {
-                            grayx += lum[x + i][y + j] * sobel1[1 + i][1 + j];
-                            grayy += lum[x + i][y + j] * sobel2[1 + i][1 + j];
-                        }
-                    }
-                    int distanceSobel1Sobel2 = (int) Math.sqrt(grayx * grayx + grayy * grayy);
-                    int gray = normalisiereFarbe(distanceSobel1Sobel2);
-                    img.setRGB(x, y, new Color(gray, gray, gray).getRGB());
-                }
+        for(int imageCount = 0; imageCount < imgList.size(); imageCount++) {
+            detectorList.add(new EdgeDetector(new ImagePathBundle(imgList.get(imageCount), pathList.get(imageCount))));
+            threadlist.add(new Thread(detectorList.get(detectorList.size()-1)));
+            threadlist.get(threadlist.size()-1).start();
+        }
+        for(Thread t : threadlist) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            writeImage(img, "" + pathList.get(imageCount).getParent() + "\\output\\mod_" + pathList.get(imageCount).getFileName());
+        }
+        for(EdgeDetector d : detectorList) {
+            writeImage(d.getOutput().getImg(), "" + d.getOutput().getPath().getParent() + "\\output\\mod_" + d.getOutput().getPath().getFileName());
         }
     }
 
-    public static ArrayList<Path> getTargetPaths() {
+    /**
+     * Reads a dir for .jpg files and saves their paths to pathList.
+     * */
+    private static ArrayList<Path> getTargetPaths() {
         Path dir = Paths.get("C:\\test\\");
         ArrayList<Path> pathList = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
@@ -73,7 +62,11 @@ public class Main {
         return pathList;
     }
 
-    public static ArrayList<BufferedImage> readImage(ArrayList<Path> pathList) {
+
+    /**
+     * Reads all .jpg files specified in pathList into memory
+     * */
+    private static ArrayList<BufferedImage> readImage(ArrayList<Path> pathList) {
         ArrayList<BufferedImage> imgList = new ArrayList<>();
         try {
             for(Path file : pathList) {
@@ -86,7 +79,11 @@ public class Main {
         return null;
     }
 
-    public static void writeImage(BufferedImage img, String fullPath) {
+
+    /**
+     * Save image as .jpg to ./output/mod_<filename>
+     * */
+    private static void writeImage(BufferedImage img, String fullPath) {
         try {
             ImageIO.write(img, "jpg", Files.newOutputStream(Paths.get(fullPath)) );
         } catch (IOException e) {
@@ -94,18 +91,7 @@ public class Main {
         }
     }
 
-    public static double[][] luminanz(BufferedImage img) {
-        double[][] output = new double[img.getWidth()][img.getHeight()];
-        for(int x = 0; x < img.getWidth(); x++) {
-            for(int y = 0; y < img.getHeight(); y++) {
-                Color pixel = new Color(img.getRGB(x,y));
-                output[x][y] = 0.299*pixel.getRed() + 0.587*pixel.getGreen() + 0.114 * pixel.getBlue();
-            }
-        }
-        return output;
-    }
 
-    public static int normalisiereFarbe(int input) {
-        return input > 255 ?  255 : input < 0 ? 0 : input;
-    }
+
+
 }
