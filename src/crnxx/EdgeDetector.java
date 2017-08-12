@@ -53,7 +53,7 @@ public class EdgeDetector implements Runnable {
      * */
     public void run() {
         System.out.println("Thread #"+this.id+" starts working.");
-        double[][] lum = luminanz(img);
+        double[][] lum = luminance(img);
 
         for (int x = 1; x < img.getWidth() - 1; x++) {
             for (int y = 1; y < img.getHeight() - 1; y++) {
@@ -68,7 +68,7 @@ public class EdgeDetector implements Runnable {
                     }
                 }
                 int distanceSobel1Sobel2 = (int) Math.sqrt(grayx * grayx + grayy * grayy);
-                int gray = normalisiereFarbe(distanceSobel1Sobel2);
+                int gray = normalizeColor(distanceSobel1Sobel2);
                 img.setRGB(x, y, new Color(gray, gray, gray).getRGB());
             }
         }
@@ -77,7 +77,7 @@ public class EdgeDetector implements Runnable {
     }
 
     /** Calculate luminance of every pixel from input picture */
-    private static double[][] luminanz(BufferedImage img) {
+    private static double[][] luminance(BufferedImage img) {
         double[][] output = new double[img.getWidth()][img.getHeight()];
         for(int x = 0; x < img.getWidth(); x++) {
             for(int y = 0; y < img.getHeight(); y++) {
@@ -89,7 +89,7 @@ public class EdgeDetector implements Runnable {
     }
 
     /** Normalizes the Color (bigger than 255 is set to 255, smaller than 0 set to zero, rest stays)*/
-    private static int normalisiereFarbe(int input) {
+    private static int normalizeColor(int input) {
         return input > 255 ?  255 : input < 0 ? 0 : input;
     }
 
