@@ -64,10 +64,10 @@ public class EdgeDetector implements Runnable {
                 int grayy = 0;
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
-                        grayx += lum[x + i][y + j] * sobel1[1 + i][1 + j];
-                        grayy += lum[x + i][y + j] * sobel2[1 + i][1 + j];
-//                        grayx += lum[x + i][y + j] * scharr1[1 + i][1 + j];
-//                        grayy += lum[x + i][y + j] * scharr2[1 + i][1 + j];
+//                        grayx += lum[x + i][y + j] * sobel1[1 + i][1 + j];
+//                        grayy += lum[x + i][y + j] * sobel2[1 + i][1 + j];
+                        grayx += lum[x + i][y + j] * scharr1[1 + i][1 + j];
+                        grayy += lum[x + i][y + j] * scharr2[1 + i][1 + j];
                     }
                 }
                 int distanceSobel1Sobel2 = (int) Math.sqrt(grayx * grayx + grayy * grayy);

@@ -1,11 +1,14 @@
 package crnxx;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.*;
 
 /**
  *  Edge Detection
@@ -15,7 +18,30 @@ import java.util.ArrayList;
  * */
 public class Main {
 
+    public static void main(String[] args) {
+        ExecutorService pool = Executors.newFixedThreadPool(Integer.parseInt(args[0]));
+        Set<Future<BufferedImage>> imgset = new HashSet<>();
 
+        for(int i = 0; i < Integer.parseInt(args[0]); i++) {
+            Callable<BufferedImage> noize = new Noize();
+            Future<BufferedImage> img = pool.submit(noize);
+            imgset.add(img);
+        }
+
+        int count = 0;
+        for (Future<BufferedImage> future : imgset) {
+            try {
+                writeImage(future.get(),"C:\\test\\new\\"+count+".jpg");
+                imgset.remove(future);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            count++;
+        }
+    }
+/*
     public static void main(String[] args) {
         ArrayList<Path> pathList;
         if(args.length < 1) {
@@ -52,7 +78,7 @@ public class Main {
             writeImage(d.getOutput().getImg(), "" + d.getOutput().getPath().getParent() + "\\output\\mod_" + d.getOutput().getPath().getFileName());
         }
     }
-
+*/
     /**
      * Reads a dir for .jpg files and saves their paths to pathList.
      * */
