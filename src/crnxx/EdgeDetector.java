@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 
+/**
+ *  TODO: Use Callable!
+ * */
 public class EdgeDetector implements Runnable {
     private final int id;
     private int[][] sobel1 = {
