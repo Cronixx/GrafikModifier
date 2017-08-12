@@ -17,6 +17,18 @@ public class EdgeDetector implements Runnable {
 
             {-1,-2,-1}
     };
+
+    private int[][] scharr1 = {
+            {3,0,-3},
+            {10,0,-10},
+            {3,0,-3}
+    };
+
+    private int[][] scharr2 = {
+            {3,10,3},
+            {0,0,0},
+            {-3,-10,-3}
+    };
     private volatile Path path;
     private volatile BufferedImage img;
     private volatile BufferedImage output;
@@ -37,6 +49,7 @@ public class EdgeDetector implements Runnable {
      * Afterwards, the result is stored in output
      * */
     public void run() {
+        System.out.println("Starte bearbeitung aus Thread");
         double[][] lum = luminanz(img);
 
         for (int x = 1; x < img.getWidth() - 1; x++) {
@@ -47,6 +60,8 @@ public class EdgeDetector implements Runnable {
                     for (int j = -1; j < 2; j++) {
                         grayx += lum[x + i][y + j] * sobel1[1 + i][1 + j];
                         grayy += lum[x + i][y + j] * sobel2[1 + i][1 + j];
+//                        grayx += lum[x + i][y + j] * scharr1[1 + i][1 + j];
+//                        grayy += lum[x + i][y + j] * scharr2[1 + i][1 + j];
                     }
                 }
                 int distanceSobel1Sobel2 = (int) Math.sqrt(grayx * grayx + grayy * grayy);

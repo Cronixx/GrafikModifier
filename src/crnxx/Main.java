@@ -31,7 +31,9 @@ public class Main {
         }
         for(Thread t : threadlist) {
             try {
+                System.out.println("Warte auf join");
                 t.join();
+                System.out.println("Join abgeschlossen");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
