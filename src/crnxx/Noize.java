@@ -20,7 +20,7 @@ public class Noize implements Callable<BufferedImage> {
                 int red = normalizeColor(r.nextInt(255));
                 int green = normalizeColor(r.nextInt(255));
                 int blue = normalizeColor(r.nextInt(255));
-                int randmod = 7;
+                int randmod = r.nextInt(100)+2;
                 Color randColor = new Color(red, green, blue);
                 Color black = new Color(0,0,0);
                 Color white = new Color(255,255,255);
