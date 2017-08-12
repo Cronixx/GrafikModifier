@@ -8,7 +8,7 @@ import java.nio.file.*;
 import java.util.ArrayList;
 
 /**
- *  Edge Detection
+ *  
  * */
 public class Main {
 
