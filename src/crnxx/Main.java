@@ -32,7 +32,6 @@ public class Main {
         for (Future<BufferedImage> future : imgset) {
             try {
                 writeImage(future.get(),"C:\\test\\new\\"+count+".jpg");
-                imgset.remove(future);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -40,6 +39,7 @@ public class Main {
             }
             count++;
         }
+        pool.shutdown();
     }
 /*
     public static void main(String[] args) {
@@ -87,10 +87,12 @@ public class Main {
         ArrayList<Path> pathList = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path file : stream) {
-                String filename = "" + file.getFileName();
-                if(filename.substring(filename.length()-4).equals(".jpg") || filename.substring(filename.length()-5).equals(".jpeg") || filename.substring(filename.length()-4).equals(".png")) {
-                    System.out.println("Found "+ file.getParent() + "\\" + filename);
-                    pathList.add(file);
+                String filename = file.getFileName().toString();
+                if(filename.length() > 4) {
+                    if (filename.substring(filename.length() - 4).equals(".jpg") || filename.substring(filename.length() - 4).equals(".png") || filename.substring(filename.length() - 5).equals(".jpeg")) {
+                        System.out.println("Found " + file.getParent() + "\\" + filename);
+                        pathList.add(file);
+                    }
                 }
             }
         } catch (IOException | DirectoryIteratorException x) {

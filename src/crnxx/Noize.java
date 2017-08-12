@@ -20,14 +20,15 @@ public class Noize implements Callable<BufferedImage> {
                 int red = normalizeColor(r.nextInt(255));
                 int green = normalizeColor(r.nextInt(255));
                 int blue = normalizeColor(r.nextInt(255));
+                int randmod = 7;
                 Color randColor = new Color(red, green, blue);
                 Color black = new Color(0,0,0);
                 Color white = new Color(255,255,255);
 
-                if(i % 27 == 0 || j % 13 == 0) {
-                    img.setRGB(j,i,randColor.getRGB());
+                if(i > randmod && j > randmod) {
+                    img.setRGB(j,i,img.getRGB(j%randmod, i%randmod));
                 } else {
-                    img.setRGB(j,i,black.getRGB());
+                    img.setRGB(j,i,randColor.getRGB());
                 }
 //                img.setRGB(j,i,randColor.getRGB());
             }
